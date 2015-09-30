@@ -1,0 +1,18 @@
+http://www.codeskulptor.org/#user40_ximEUIj1DVmBdGF.py
+All fine, but if you call the rpsls() function with wrong name of player's choice, you'll get an exception: Line 72: TypeError: unsupported operand type(s) for Sub: 'int' and 'NoneType'
+It'd be better if name_to_number() function returns number (e.g. 0 or -1, or smth else) in the case of wrong name and you then handle it in rpsls(). Good luck!
+
+http://www.codeskulptor.org/#user40_hJ8f4izDxg_1.py
+All fine, but you can improve your rpsls() function to handle cases when player chooses wrong value. In your program even if the player's chioce is incorrect, it doesn't matter: rpsls() will define the winner. That's not fair :) Best luck!
+
+http://www.codeskulptor.org/#user40_MtcBfqDEv0UGiqI.py
+Hi! All good, but your name_to_number() function will always return 4 even if the players's choice is incorrect, and rspls() will define the winner whatever the choice. 
+
+http://www.codeskulptor.org/#user40_2X1keEWca7tgENp.py
+random.randrange(0,4) will never return 4, so computer is unable to choose "scissors"
+Except that computer is confined to choose between rock,Spock,lizard and paper, if you call the rpsls() function with wrong name of player's choice, you'll get an exception: Line 42: TypeError: unsupported operand type(s) for Sub: 'str' and 'int'
+It'd be better if name_to_number() function returns number (e.g. 0 or -1, or smth else) in the case of wrong name and you then handle it in rpsls().
+Best luck next time!
+
+http://www.codeskulptor.org/#user40_36GtMyx2JTQkKQc.py
+All fine.
