@@ -60,10 +60,14 @@ def draw(canvas):
     canvas.draw_circle([ball_pos[0],ball_pos[1]],BALL_RADIUS,1,"White","White")
     
     # update paddle's vertical position, keep paddle on the screen
-    if paddle1_pos <= HALF_PAD_HEIGHT or paddle1_pos >= HEIGHT - HALF_PAD_HEIGHT:
-        paddle1_vel = 0
-    if paddle2_pos <= HALF_PAD_HEIGHT or paddle2_pos >= HEIGHT - HALF_PAD_HEIGHT:
-        paddle2_vel = 0
+    if paddle1_pos <= HALF_PAD_HEIGHT: 
+        paddle1_pos = HALF_PAD_HEIGHT
+    if paddle1_pos >= HEIGHT - HALF_PAD_HEIGHT:
+        paddle1_pos = HEIGHT - HALF_PAD_HEIGHT
+    if paddle2_pos <= HALF_PAD_HEIGHT: 
+        paddle2_pos = HALF_PAD_HEIGHT
+    if paddle2_pos >= HEIGHT - HALF_PAD_HEIGHT:
+        paddle2_pos = HEIGHT - HALF_PAD_HEIGHT
         
     paddle1_pos += paddle1_vel
     paddle2_pos += paddle2_vel
@@ -79,16 +83,40 @@ def draw(canvas):
                          [WIDTH,             paddle2_pos + HALF_PAD_HEIGHT],
                          [WIDTH - PAD_WIDTH, paddle2_pos + HALF_PAD_HEIGHT]],
                         1,"White","White")
+    
     # determine whether paddle and ball collide    
+    if ball_pos[0] <= PAD_WIDTH + BALL_RADIUS and (ball_pos[1] >= paddle1_pos - HALF_PAD_HEIGHT or ball_pos[1] <=paddle1_pos + HALF_PAD_HEIGHT):
+        print ball_pos, ball_vel
+        ball_vel[0] *= -1
+    if ball_pos[0] >= WIDTH - PAD_WIDTH - BALL_RADIUS and (ball_pos[1] >= paddle1_pos - HALF_PAD_HEIGHT or ball_pos[1] <=paddle1_pos + HALF_PAD_HEIGHT):
+        print ball_pos, ball_vel
+        ball_vel[0] *= -1
     
     # draw scores
         
 def keydown(key):
     global paddle1_vel, paddle2_vel
+    if key == simplegui.KEY_MAP['w']:
+        paddle1_vel = -3
+    if key == simplegui.KEY_MAP['s']:
+        paddle1_vel = 3
+    if key == simplegui.KEY_MAP['up']:
+        paddle2_vel = -3
+    if key == simplegui.KEY_MAP['down']:
+        paddle2_vel = 3
+    print paddle1_pos
+    print paddle2_pos
    
 def keyup(key):
     global paddle1_vel, paddle2_vel
-
+    if key == simplegui.KEY_MAP['w']:
+        paddle1_vel = 0
+    if key == simplegui.KEY_MAP['s']:
+        paddle1_vel = 0
+    if key == simplegui.KEY_MAP['up']:
+        paddle2_vel = 0
+    if key == simplegui.KEY_MAP['down']:
+        paddle2_vel = 0
 
 # create frame
 frame = simplegui.create_frame("Pong", WIDTH, HEIGHT)
