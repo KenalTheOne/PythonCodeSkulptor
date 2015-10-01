@@ -13,7 +13,7 @@ HALF_PAD_WIDTH = PAD_WIDTH / 2
 HALF_PAD_HEIGHT = PAD_HEIGHT / 2
 LEFT = False
 RIGHT = True
-
+PAD_ABS_VEL = 3
 
 # initialize ball_pos and ball_vel for new bal in middle of table
 # if direction is RIGHT, the ball's velocity is upper right, else upper left
@@ -46,13 +46,10 @@ def draw(canvas):
     canvas.draw_line([WIDTH - PAD_WIDTH, 0],[WIDTH - PAD_WIDTH, HEIGHT], 1, "White")
         
     # update ball
+    # collide with horizontal wall
     if ball_pos[1] <= BALL_RADIUS or ball_pos[1] >= HEIGHT - BALL_RADIUS:
-        ball_vel[1] *= -1
-    if ball_pos[0] <= BALL_RADIUS + PAD_WIDTH:
-        spawn_ball(RIGHT)
-    if ball_pos[0] >= WIDTH - BALL_RADIUS - PAD_WIDTH:
-        spawn_ball(LEFT)
-    
+        ball_vel[1] *= -1    
+    #change velocity
     ball_pos[0] += ball_vel[0]    
     ball_pos[1] += ball_vel[1]     
         
@@ -60,17 +57,10 @@ def draw(canvas):
     canvas.draw_circle([ball_pos[0],ball_pos[1]],BALL_RADIUS,1,"White","White")
     
     # update paddle's vertical position, keep paddle on the screen
-    if paddle1_pos <= HALF_PAD_HEIGHT: 
-        paddle1_pos = HALF_PAD_HEIGHT
-    if paddle1_pos >= HEIGHT - HALF_PAD_HEIGHT:
-        paddle1_pos = HEIGHT - HALF_PAD_HEIGHT
-    if paddle2_pos <= HALF_PAD_HEIGHT: 
-        paddle2_pos = HALF_PAD_HEIGHT
-    if paddle2_pos >= HEIGHT - HALF_PAD_HEIGHT:
-        paddle2_pos = HEIGHT - HALF_PAD_HEIGHT
-        
-    paddle1_pos += paddle1_vel
-    paddle2_pos += paddle2_vel
+    if (wtimer.is_running() or stimer.is_running()) and paddle1_pos - HALF_PAD_HEIGHT + paddle1_vel >= 0 and paddle1_pos + HALF_PAD_HEIGHT + paddle1_vel <= HEIGHT:   
+        paddle1_pos += paddle1_vel
+    if (uptimer.is_running() or downtimer.is_running()) and paddle2_pos - HALF_PAD_HEIGHT + paddle2_vel >= 0 and paddle2_pos + HALF_PAD_HEIGHT + paddle2_vel <= HEIGHT:   
+        paddle2_pos += paddle2_vel
     
     # draw paddles
     canvas.draw_polygon([[0,         paddle1_pos - HALF_PAD_HEIGHT],
@@ -84,46 +74,62 @@ def draw(canvas):
                          [WIDTH - PAD_WIDTH, paddle2_pos + HALF_PAD_HEIGHT]],
                         1,"White","White")
     
-    # determine whether paddle and ball collide    
-    if ball_pos[0] <= PAD_WIDTH + BALL_RADIUS and (ball_pos[1] >= paddle1_pos - HALF_PAD_HEIGHT or ball_pos[1] <=paddle1_pos + HALF_PAD_HEIGHT):
-        print ball_pos, ball_vel
-        ball_vel[0] *= -1
-    if ball_pos[0] >= WIDTH - PAD_WIDTH - BALL_RADIUS and (ball_pos[1] >= paddle1_pos - HALF_PAD_HEIGHT or ball_pos[1] <=paddle1_pos + HALF_PAD_HEIGHT):
-        print ball_pos, ball_vel
-        ball_vel[0] *= -1
+    # determine whether paddle and ball collide
+    if ball_pos[0] <= BALL_RADIUS + PAD_WIDTH:
+        if (ball_pos[1] >= paddle1_pos - HALF_PAD_HEIGHT and ball_pos[1] <= paddle1_pos + HALF_PAD_HEIGHT):
+            ball_vel[0] *= -1.1
+        else:
+            spawn_ball(RIGHT)
+    if ball_pos[0] >= WIDTH - BALL_RADIUS - PAD_WIDTH:
+        if (ball_pos[1] >= paddle2_pos - HALF_PAD_HEIGHT and ball_pos[1] <= paddle2_pos + HALF_PAD_HEIGHT):
+            ball_vel[0] *= -1.1
+        else:
+            spawn_ball(LEFT)
     
     # draw scores
         
 def keydown(key):
     global paddle1_vel, paddle2_vel
     if key == simplegui.KEY_MAP['w']:
-        paddle1_vel = -3
+        paddle1_vel = -PAD_ABS_VEL
+        wtimer.start()
+        stimer.stop()
     if key == simplegui.KEY_MAP['s']:
-        paddle1_vel = 3
+        paddle1_vel = PAD_ABS_VEL
+        stimer.start()
+        wtimer.stop()
     if key == simplegui.KEY_MAP['up']:
-        paddle2_vel = -3
+        paddle2_vel = -PAD_ABS_VEL
+        uptimer.start()
+        downtimer.stop()
     if key == simplegui.KEY_MAP['down']:
-        paddle2_vel = 3
-    print paddle1_pos
-    print paddle2_pos
+        paddle2_vel = PAD_ABS_VEL
+        downtimer.start()
+        uptimer.stop()
    
 def keyup(key):
     global paddle1_vel, paddle2_vel
     if key == simplegui.KEY_MAP['w']:
-        paddle1_vel = 0
+        wtimer.stop()
     if key == simplegui.KEY_MAP['s']:
-        paddle1_vel = 0
+        stimer.stop()
     if key == simplegui.KEY_MAP['up']:
-        paddle2_vel = 0
+        uptimer.stop()
     if key == simplegui.KEY_MAP['down']:
-        paddle2_vel = 0
+        downtimer.stop()
 
+def tick():
+    return
+        
 # create frame
 frame = simplegui.create_frame("Pong", WIDTH, HEIGHT)
 frame.set_draw_handler(draw)
 frame.set_keydown_handler(keydown)
 frame.set_keyup_handler(keyup)
-
+wtimer = simplegui.create_timer(1,tick)
+stimer = simplegui.create_timer(1,tick)
+uptimer = simplegui.create_timer(1,tick)
+downtimer = simplegui.create_timer(1,tick)
 
 # start frame
 new_game()
