@@ -31,11 +31,14 @@ def spawn_ball(direction):
 def new_game():
     global paddle1_pos, paddle2_pos, paddle1_vel, paddle2_vel  # these are numbers
     global score1, score2  # these are ints
+    score1 = 0
+    score2 = 0
     spawn_ball(RIGHT)
     paddle1_pos = HEIGHT / 2
     paddle2_pos = HEIGHT / 2
     paddle1_vel = 0
     paddle2_vel = 0
+
 
 def draw(canvas):
     global score1, score2, paddle1_pos, paddle2_pos, ball_pos, ball_vel, paddle1_vel, paddle2_vel
@@ -79,14 +82,18 @@ def draw(canvas):
         if (ball_pos[1] >= paddle1_pos - HALF_PAD_HEIGHT and ball_pos[1] <= paddle1_pos + HALF_PAD_HEIGHT):
             ball_vel[0] *= -1.1
         else:
+            score2 += 1
             spawn_ball(RIGHT)
     if ball_pos[0] >= WIDTH - BALL_RADIUS - PAD_WIDTH:
         if (ball_pos[1] >= paddle2_pos - HALF_PAD_HEIGHT and ball_pos[1] <= paddle2_pos + HALF_PAD_HEIGHT):
             ball_vel[0] *= -1.1
         else:
+            score1 += 1
             spawn_ball(LEFT)
     
     # draw scores
+    canvas.draw_text(str(score1),[WIDTH / 4, 50], 36, "White")
+    canvas.draw_text(str(score2),[WIDTH - WIDTH / 4, 50], 36, "White")
         
 def keydown(key):
     global paddle1_vel, paddle2_vel
@@ -120,6 +127,9 @@ def keyup(key):
 
 def tick():
     return
+
+def restart():
+    new_game()
         
 # create frame
 frame = simplegui.create_frame("Pong", WIDTH, HEIGHT)
@@ -130,6 +140,7 @@ wtimer = simplegui.create_timer(1,tick)
 stimer = simplegui.create_timer(1,tick)
 uptimer = simplegui.create_timer(1,tick)
 downtimer = simplegui.create_timer(1,tick)
+frame.add_button("Restart", restart, 100)
 
 # start frame
 new_game()
