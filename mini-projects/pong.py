@@ -33,7 +33,11 @@ def new_game():
     global score1, score2  # these are ints
     score1 = 0
     score2 = 0
-    spawn_ball(RIGHT)
+    dir = random.randrange(0,2)
+    if dir == 0:
+        spawn_ball(RIGHT)
+    else: 
+        spawn_ball(LEFT)
     paddle1_pos = HEIGHT / 2
     paddle2_pos = HEIGHT / 2
     paddle1_vel = 0
@@ -60,6 +64,7 @@ def draw(canvas):
     canvas.draw_circle([ball_pos[0],ball_pos[1]],BALL_RADIUS,1,"White","White")
     
     # update paddle's vertical position, keep paddle on the screen
+    # using the timers to prevent paddles to stuck when we change direction of them quickly
     if (wtimer.is_running() or stimer.is_running()) and paddle1_pos - HALF_PAD_HEIGHT + paddle1_vel >= 0 and paddle1_pos + HALF_PAD_HEIGHT + paddle1_vel <= HEIGHT:   
         paddle1_pos += paddle1_vel
     if (uptimer.is_running() or downtimer.is_running()) and paddle2_pos - HALF_PAD_HEIGHT + paddle2_vel >= 0 and paddle2_pos + HALF_PAD_HEIGHT + paddle2_vel <= HEIGHT:   
