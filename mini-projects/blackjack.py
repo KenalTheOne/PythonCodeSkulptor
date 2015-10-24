@@ -146,12 +146,12 @@ def hit():
     if in_play:
         hand_of_player.add_card(deck.deal_card())
    
-    # if busted, assign a message to outcome, update in_play and score
-    if hand_of_player.get_value() > 21:
-        in_play = False
-        score -= bet
-        outcome = "You have busted. New deal?"
-        #print outcome
+        # if busted, assign a message to outcome, update in_play and score
+        if hand_of_player.get_value() > 21:
+            in_play = False
+            score -= bet
+            outcome = "You have busted. New deal?"
+    #print outcome
        
 def stand():
     global in_play, hand_of_player, hand_of_dealer, outcome, score, deck
